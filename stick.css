@@ -1,0 +1,39 @@
+:root{
+    --border-background: 2px;
+}
+
+.stick_main_div{
+    position: relative;
+    height: 100%;
+    width: 100%;
+    margin: 0;
+}
+.stick_main_div > .track{
+    position: absolute;
+    height: 10px;
+    width: 100%;
+    border: var(--border-background) solid orange;
+    border-radius: 5px;
+    background: grey;
+}
+.stick_main_div > .progress{
+    position: absolute;
+    height: 10px;
+    width: 100%;
+    top: var(--border-background);
+    left: var(--border-background);
+    border: none;
+    background: hotpink;
+}
+.stick_main_div > .thumb{
+    position: absolute;
+    height: 14px;
+    width: 14px;
+    border: 2px solid green;
+    background: greenyellow;
+    top: -2px;
+}
+.stick_main_div > .scale{
+    width: 100%;
+    height: 10px;
+}
