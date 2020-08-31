@@ -40,13 +40,13 @@
 
 			delta_x = 0;
 			/* Ставим обработчики событий на нажатие и отпускание клавиши мыши */
-			thumb.onmousedown = saveXY;
+			thumb.onmousedown = startMove;
 			if (op || ff) {
-			thumb.addEventListener("onmousedown", saveXY, false);
+			thumb.addEventListener("onmousedown", startMove, false);
 			}
-			document.onmouseup = clearXY;
-			/* При нажатии кнопки мыши попадаем в эту функцию */
-			function saveXY(obj_event) {
+			document.onmouseup = stopMove;
+			
+			function startMove(obj_event) {
 				/* Получаем текущие координаты курсора */
 				if (obj_event) {
 					x = obj_event.pageX;
@@ -62,14 +62,17 @@
 				/* Узнаём смещение */
 				delta_x = x_block - x;
 				/* При движении курсора устанавливаем вызов функции moveWindow */
-				document.onmousemove = moveBlock;
+				document.onmousemove = moveThumb;
 				if (op || ff)
-					document.addEventListener("onmousemove", moveBlock, false);
+					document.addEventListener("onmousemove", moveThumb, false);
 				}
-			function clearXY() {
+			function stopMove() {
 				document.onmousemove = null; // При отпускании мыши убираем обработку события движения мыши
 			}
-			function moveBlock(obj_event) {
+			//функция выполняемая при движении ползунка
+			function moveThumb(obj_event) {
+				trackWidth = track.offsetWidth;
+				delta_trackWidth = trackWidth - thumb.offsetWidth;
 				/* Получаем новые координаты курсора мыши */
 				if (obj_event) {
 					x = obj_event.pageX;
@@ -80,15 +83,24 @@
 					x -= 2;
 					}
 				}
-				/* Вычисляем новые координаты блока */
+				/* Вычисляем новые координаты бегунка */
 				new_x = delta_x + x;
 				if (new_x < 0){
 					new_x = 0;
-				}else if (new_x > track.offsetWidth){
-					new_x = track.offsetWidth - thumb.offsetWidth;
+				}else if (new_x > delta_trackWidth){
+					new_x = delta_trackWidth;
 				};
 				thumb.style.left = new_x + "px";
+
+				/*Значение слайдера в процентах*/
+				let procent = ((delta_trackWidth - (delta_trackWidth - new_x)) / delta_trackWidth) * 100;
+				
+				/*Задаем значение прогрессбару*/ 
+				progress.style.width = procent + "%";
 			}
+
+			
+
 		}
 	})	
 })(jQuery);
