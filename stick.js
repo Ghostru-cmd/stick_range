@@ -15,6 +15,9 @@
 			let thumb = document.createElement("div");
 			thumb.className = "thumb";
 
+			let outValue = document.createElement("div");
+			outValue.className = "outValue";
+
 			let scale = document.createElement("div");
 			scale.className = "scale";
 
@@ -22,6 +25,7 @@
 			$(this).children(".stick_main_div").append(track);
 			$(this).children(".stick_main_div").append(progress);
 			$(this).children(".stick_main_div").append(thumb);
+			$(this).children(".stick_main_div").append(outValue);
 			$(this).children(".stick_main_div").append(scale);
 
 			
@@ -93,10 +97,28 @@
 				thumb.style.left = new_x + "px";
 
 				/*Значение слайдера в процентах*/
-				let procent = ((delta_trackWidth - (delta_trackWidth - new_x)) / delta_trackWidth) * 100;
+				let percent = ((delta_trackWidth - (delta_trackWidth - new_x)) / delta_trackWidth) * 100;
 				
 				/*Задаем значение прогрессбару*/ 
-				progress.style.width = procent + "%";
+				progress.style.width = percent + "%";
+
+				/*Задаем выводимое значение*/
+				if (opt.vagon != undefined){
+					/*Значение в процентах*/
+					if (opt.vagon[0] == "percent"){
+						outValue.innerHTML = percent.toFixed(opt.vagon[1]);
+					};
+					/*Числовое значение*/
+					if (opt.vagon[0] == "value"){
+						delta_MinMax = opt.vagon[2] - opt.vagon[1];
+						thisValue = (delta_MinMax / 100 * percent) + opt.vagon[1];
+
+						outValue.innerHTML = thisValue.toFixed(opt.vagon[3] ? opt.vagon[3] : '');
+
+						delta_MinMax = opt.vagon[2] - opt.vagon[1];
+
+					};
+				}
 			}
 
 			

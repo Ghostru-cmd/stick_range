@@ -19,7 +19,7 @@
 .stick_main_div > .progress{
     position: absolute;
     height: 10px;
-    width: 100%;
+    width: 0%;
     top: var(--border-background);
     left: var(--border-background);
     border: none;
@@ -32,6 +32,10 @@
     border: 2px solid green;
     background: greenyellow;
     top: -2px;
+}
+.stick_main_div > .outValue{
+    position: absolute;
+    left: -35px;
 }
 .stick_main_div > .scale{
     width: 100%;
