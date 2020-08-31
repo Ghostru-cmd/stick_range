@@ -3,8 +3,13 @@
 	$("head").append($("<link rel=\"stylesheet\" href=\"./stick.css\">")); // подключил стили 
 	$.fn.extend({
 		stick: function(opt) {
+			/*Создаем дивы слайдера*/
 			let main_div = document.createElement("div");
 			main_div.className = "stick_main_div";
+			/*Запрещаем перетаскивать как изображение*/
+			main_div.setAttribute("ondrag" , "return false");
+			main_div.setAttribute("ondragdrop" , "return false"); 
+			main_div.setAttribute("ondragstart" , "return false");
 				
 			let track = document.createElement("div");
 			track.className = "track";
@@ -18,17 +23,31 @@
 			let outValue = document.createElement("div");
 			outValue.className = "outValue";
 
+			let vagon = document.createElement("div");
+			vagon.className = "vagon";
+
 			let scale = document.createElement("div");
 			scale.className = "scale";
 
+			let scale_value = document.createElement("div");
+			scale_value.className = "scale_value";
+
+			/*Выводим дивы на страницу */
 			$(this).append(main_div);
 			$(this).children(".stick_main_div").append(track);
 			$(this).children(".stick_main_div").append(progress);
 			$(this).children(".stick_main_div").append(thumb);
+			if (opt.outValue){
 			$(this).children(".stick_main_div").append(outValue);
-			$(this).children(".stick_main_div").append(scale);
+			};
+			if (opt.vagon){
+				$(this).children(".stick_main_div").append(vagon);
+			};
+			if (opt.scale){
+				$(this).children(".stick_main_div").append(scale);
+			};
 
-			
+			/*Создаем возможность движение ползунка*/
 			/* Определяем тип браузера */
 			let ie = 0;
 			let op = 0;
@@ -103,26 +122,76 @@
 				progress.style.width = percent + "%";
 
 				/*Задаем выводимое значение*/
+				if (opt.outValue != undefined){
+					/*Значение в процентах*/
+					if (opt.outValue[0] == "percent"){
+						outValue.innerHTML = percent.toFixed(opt.outValue[1]);
+					};
+					/*Числовое значение*/
+					if (opt.outValue[0] == "value"){
+						delta_MinMax = opt.outValue[2] - opt.outValue[1];
+						thisValue = (delta_MinMax / 100 * percent) + opt.outValue[1];
+
+						outValue.innerHTML = thisValue.toFixed(opt.outValue[3] ? opt.outValue[3] : '');
+
+					};
+				}
+				
+				/*Логика для вагонетки */
 				if (opt.vagon != undefined){
+					/* */
 					/*Значение в процентах*/
 					if (opt.vagon[0] == "percent"){
-						outValue.innerHTML = percent.toFixed(opt.vagon[1]);
+						vagon.innerHTML = percent.toFixed(opt.vagon[1]);
 					};
 					/*Числовое значение*/
 					if (opt.vagon[0] == "value"){
 						delta_MinMax = opt.vagon[2] - opt.vagon[1];
 						thisValue = (delta_MinMax / 100 * percent) + opt.vagon[1];
-
-						outValue.innerHTML = thisValue.toFixed(opt.vagon[3] ? opt.vagon[3] : '');
-
-						delta_MinMax = opt.vagon[2] - opt.vagon[1];
-
+						vagon.innerHTML = thisValue.toFixed(opt.vagon[3] ? opt.vagon[3] : '');
 					};
+					/*Расчет сдвига вагонетки */
+					if (vagon.innerHTML < 9){
+						vagon.style.left = progress.offsetWidth + "px";
+					}else if (9 < vagon.innerHTML && vagon.innerHTML < 99){
+						vagon.style.left = progress.offsetWidth + "px";
+					}else if (99 < vagon.innerHTML && vagon.innerHTML < 999){
+						vagon.style.left = progress.offsetWidth - 2.5 + "px";
+					}else if (999 < vagon.innerHTML && vagon.innerHTML < 9999){
+						vagon.style.left = progress.offsetWidth - 5 + "px";
+					}
 				}
 			}
 
-			
-
+			/*Расчет шкалы */
+			if (opt.scale != undefined){
+				let delta_MinMax = opt.vagon[2] - opt.vagon[1];
+				let deltaScale = delta_MinMax / opt.scale[0];
+				for (i = 0; i <= opt.vagon[2]; i += deltaScale){
+					let scaleWidth = track.offsetWidth / opt.scale[0];
+					if (i < 9){
+						scaleWidth -= 10;
+					}
+					if (9 < i && i < 99){
+						scaleWidth -= 20;
+					}
+					if (99 < i && i < 999){
+						scaleWidth -= 30;
+					}
+					if (999 < i && i < 9999){
+						scaleWidth -= 40;
+					}
+					scale_value.innerHTML = parseInt(i);
+					scale_value.style.marginRight = scaleWidth +"px";
+					$(scale_value).clone().appendTo(scale);
+				};
+			};
+	
+			/*Действия при клике на шкалу 
+			slider_scale_value.oninput = function() {
+				$(this).parent().children("slider").value = this.innerHTML();
+				alert(1);
+			};*/
 		}
 	})	
 })(jQuery);

@@ -37,7 +37,17 @@
     position: absolute;
     left: -35px;
 }
+.stick_main_div > .vagon{
+    position: absolute;
+    border: 1px solid black;
+    top: -25px;
+}
 .stick_main_div > .scale{
+    position: relative;
     width: 100%;
     height: 10px;
+    top: 15px;
+}
+.stick_main_div > .scale > .scale_value{
+    display: inline;
 }
