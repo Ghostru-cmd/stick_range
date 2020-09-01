@@ -50,4 +50,5 @@
 }
 .stick_main_div > .scale > .scale_value{
     display: inline;
+    cursor: pointer;
 }

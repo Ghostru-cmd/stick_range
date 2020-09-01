@@ -42,6 +42,7 @@
 			};
 			if (opt.vagon){
 				$(this).children(".stick_main_div").append(vagon);
+				vagon.innerHTML = 0;
 			};
 			if (opt.scale){
 				$(this).children(".stick_main_div").append(scale);
@@ -53,13 +54,13 @@
 			let op = 0;
 			let ff = 0;
 			let browser = navigator.userAgent;
-			if (browser.indexOf("Opera") != -1) op = 1;
-			else {
-				if (browser.indexOf("MSIE") != -1) ie = 1;
-				else {
-					if (browser.indexOf("Firefox") != -1) ff = 1;
-				}
-			}
+			if (browser.indexOf("Opera") != -1) {
+				op = 1
+			}else if (browser.indexOf("MSIE") != -1) {
+				ie = 1
+			}else if (browser.indexOf("Firefox") != -1) {
+				ff = 1
+			};
 
 			delta_x = 0;
 			/* Ставим обработчики событий на нажатие и отпускание клавиши мыши */
@@ -187,11 +188,71 @@
 				};
 			};
 	
-			/*Действия при клике на шкалу 
-			slider_scale_value.oninput = function() {
-				$(this).parent().children("slider").value = this.innerHTML();
-				alert(1);
-			};*/
+			/*Действия при клике на шкалу */
+			$(this).children(".stick_main_div").children(".scale").children(".scale_value").click(scaleClick);
+			function scaleClick() {
+				let scaleValue = $(this).html();
+				let changeVal = (scaleValue / opt.vagon[2]) * 100;
+				changeValue(changeVal);
+				
+			};
+
+			/*Действия при клике на track и progress */
+			$(this).children(".stick_main_div").children(".track").click(trackProgressClick);
+			$(this).children(".stick_main_div").children(".progress").click(trackProgressClick);
+			function trackProgressClick(obj_event) {
+				x = track.offsetWidth;
+
+				let elem_left = $(this).offset().left;
+				y = obj_event.pageX - elem_left;
+				let changeVal = (y / x) * 100;
+				changeValue(changeVal);
+				
+			};
+
+			function changeValue(percent){
+				/*Задаем значение прогрессбару*/ 
+				progress.style.width = percent + "%";
+
+				/*Перемещаем бегунок*/
+				thumb.style.left = percent + "%";
+
+				/*Значение вагонетки в процентах*/
+				if (opt.vagon[0] == "percent"){
+					vagon.innerHTML = percent.toFixed(opt.vagon[1]);
+				};
+				/*Числовое значение вагонетки*/
+				if (opt.vagon[0] == "value"){
+					delta_MinMax = opt.vagon[2] - opt.vagon[1];
+					thisValue = (delta_MinMax / 100 * percent) + opt.vagon[1];
+					vagon.innerHTML = thisValue.toFixed(opt.vagon[3] ? opt.vagon[3] : '');
+				};
+				/*Расчет сдвига вагонетки */
+				if (vagon.innerHTML < 9){
+					vagon.style.left = progress.offsetWidth + "px";
+				}else if (9 < vagon.innerHTML && vagon.innerHTML < 99){
+					vagon.style.left = progress.offsetWidth + "px";
+				}else if (99 < vagon.innerHTML && vagon.innerHTML < 999){
+					vagon.style.left = progress.offsetWidth - 2.5 + "px";
+				}else if (999 < vagon.innerHTML && vagon.innerHTML < 9999){
+					vagon.style.left = progress.offsetWidth - 5 + "px";
+				}
+
+				/*Задаем выводимое значение*/
+				/*Значение в процентах*/
+				if (opt.outValue[0] == "percent"){
+					outValue.innerHTML = percent.toFixed(opt.outValue[1]);
+				};
+				/*Числовое значение*/
+				if (opt.outValue[0] == "value"){
+					delta_MinMax = opt.outValue[2] - opt.outValue[1];
+					thisValue = (delta_MinMax / 100 * percent) + opt.outValue[1];
+
+					outValue.innerHTML = thisValue.toFixed(opt.outValue[3] ? opt.outValue[3] : '');
+
+				};
+
+			}
 		}
 	})	
 })(jQuery);
