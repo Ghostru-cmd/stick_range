@@ -32,6 +32,16 @@
     border: 2px solid green;
     background: greenyellow;
     top: -2px;
+    z-index: 1;
+}
+.stick_main_div > .doubleThumb{
+    position: absolute;
+    height: 14px;
+    width: 14px;
+    border: 2px solid green;
+    background: greenyellow;
+    top: -2px;
+    z-index: 0;
 }
 .stick_main_div > .outValue{
     position: absolute;
