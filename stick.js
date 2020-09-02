@@ -70,7 +70,14 @@
 			};
 
 			delta_x = 0;
-			let percent2 = 0;
+			/*Значение слайдера в процентах*/
+			function newPercent() {
+				percent = ((thumb.offsetLeft + thumb.offsetWidth) / track.offsetWidth) * 100;
+			}
+			function newPercent2() {
+				percent2 = (doubleThumb.offsetLeft / track.offsetWidth) * 100;
+			}
+
 			/* Ставим обработчики событий на нажатие и отпускание клавиши мыши */
 			thumb.onmousedown = startMove;
 			doubleThumb.onmousedown = startMoveSecond;
@@ -100,6 +107,7 @@
 				if (op || ff)
 					document.addEventListener("onmousemove", moveThumb, false);
 			}
+
 			//функция выполняемая при движении ползунка
 			function moveThumb(obj_event) {
 				trackWidth = track.offsetWidth;
@@ -127,69 +135,16 @@
 						doubleThumb.style.left = (thumb.offsetLeft - thumb.offsetWidth) + "px";
 					};
 				};
-
-				/*Значение слайдера в процентах*/
-				percent = ((delta_trackWidth - (delta_trackWidth - new_x)) / delta_trackWidth) * 100;
-
-				/*Задаем значение прогрессбару*/
-				if (opt.doubleThumb){
-					progress.style.width = thumb.offsetLeft - doubleThumb.offsetLeft + "px";
-					progress.style.left = doubleThumb.offsetLeft + "px";
-				}else{
-					progress.style.width = thumb.offsetLeft + "px";
-				}
-
-				/*Задаем выводимое значение*/
-				if (opt.outValue != undefined){
-					/*Значение в процентах*/
-					if (opt.outValue[0] == "percent"){
-						outValue.innerHTML = percent.toFixed(opt.outValue[1]);
-					};
-					/*Числовое значение*/
-					if (opt.outValue[0] == "value"){
-						delta_MinMax = opt.outValue[2] - opt.outValue[1];
-						thisValue = (delta_MinMax / 100 * percent) + opt.outValue[1];
-
-						outValue.innerHTML = thisValue.toFixed(opt.outValue[3] ? opt.outValue[3] : '');
-
-					};
-				}
 				
-				/*Логика для вагонетки */
-				if (opt.vagon != undefined){
-					/* */
-					/*Значение в процентах*/
-					if (opt.vagon[0] == "percent"){
-						vagon.innerHTML = percent.toFixed(opt.vagon[1]);
-					};
-					/*Числовое значение*/
-					if (opt.vagon[0] == "value"){
-						delta_MinMax = opt.vagon[2] - opt.vagon[1];
-						thisValue = (delta_MinMax / 100 * percent) + opt.vagon[1];
-						vagon.innerHTML = thisValue.toFixed(opt.vagon[3] ? opt.vagon[3] : '');
-					};
-					/*Расчет сдвига вагонетки */
-					if (opt.doubleThumb) {
-						if (vagon.innerHTML < 9){
-							vagon.style.left = progress.offsetLeft + "px";
-						}else if (9 < vagon.innerHTML && vagon.innerHTML < 99){
-							vagon.style.left = progress.offsetLeft + "px";
-						}else if (99 < vagon.innerHTML && vagon.innerHTML < 999){
-							vagon.style.left = progress.offsetLeft - 2.5 + "px";
-						}else if (999 < vagon.innerHTML && vagon.innerHTML < 9999){
-							vagon.style.left = progress.offsetLeft - 5 + "px";
-						}
-					}else {
-						if (vagon.innerHTML < 9){
-							vagon.style.left = progress.offsetWidth + "px";
-						}else if (9 < vagon.innerHTML && vagon.innerHTML < 99){
-							vagon.style.left = progress.offsetWidth + "px";
-						}else if (99 < vagon.innerHTML && vagon.innerHTML < 999){
-							vagon.style.left = progress.offsetWidth - 2.5 + "px";
-						}else if (999 < vagon.innerHTML && vagon.innerHTML < 9999){
-							vagon.style.left = progress.offsetWidth - 5 + "px";
-						}
-					}
+				newPercent();
+
+				changeProgress();
+
+				if (opt.outValue){
+					valueInferred();
+				}
+				if (opt.vagon){
+					vagonetka();
 				}
 			}
 
@@ -214,6 +169,7 @@
 					document.addEventListener("onmousemove", moveThumbSecond, false);
 				}
 			}
+
 			function moveThumbSecond(obj_event) {
 				trackWidth = track.offsetWidth;
 				delta_trackWidth = trackWidth - doubleThumb.offsetWidth;
@@ -241,74 +197,97 @@
 					};
 				};
 
-				/*Значение слайдера в процентах*/
-				percent2 = ((delta_trackWidth - (delta_trackWidth - new_x)) / delta_trackWidth) * 100;
+				newPercent2();
 				
-				/*Задаем значение прогрессбару*/ 
+				changeProgress();
+
+				if (opt.outValue){
+					valueInferred();
+				}
+				if (opt.vagon){
+					vagonetka();
+				}
+			}
+
+			function stopMove() {
+				document.onmousemove = null; // При отпускании мыши убираем обработку события движения мыши
+			}
+
+			/*Задаем выводимое значение*/
+			function valueInferred() {
+				/*Значение в процентах*/
+				if (opt.outValue[0] == "percent"){
+					outValue.innerHTML = percent.toFixed(opt.outValue[1]);
+				};
+				/*Числовое значение*/
+				if (opt.outValue[0] == "value"){
+					delta_MinMax = opt.outValue[2] - opt.outValue[1];
+					thisValue = (delta_MinMax / 100 * percent) + opt.outValue[1];
+
+					outValue.innerHTML = thisValue.toFixed(opt.outValue[3] ? opt.outValue[3] : '');
+
+				};
+			
+			}
+
+			/*Задаем значение прогрессбару*/ 
+			function changeProgress() {
 				if (opt.doubleThumb){
 					progress.style.width = thumb.offsetLeft - doubleThumb.offsetLeft + "px";
 					progress.style.left = doubleThumb.offsetLeft + "px";
 				}else{
 					progress.style.width = thumb.offsetLeft + "px";
 				}
+			}
 
-				/*Задаем выводимое значение*/
-				if (opt.outValue != undefined){
-					/*Значение в процентах*/
-					if (opt.outValue[0] == "percent"){
-						outValue.innerHTML = percent2.toFixed(opt.outValue[1]);
-					};
-					/*Числовое значение*/
-					if (opt.outValue[0] == "value"){
-						delta_MinMax = opt.outValue[2] - opt.outValue[1];
-						thisValue = (delta_MinMax / 100 * percent2) + opt.outValue[1];
-
-						outValue.innerHTML = thisValue.toFixed(opt.outValue[3] ? opt.outValue[3] : '');
-
-					};
-				}
-				
-				/*Логика для вагонетки */
-				if (opt.vagon != undefined){
-					/* */
-					/*Значение в процентах*/
-					if (opt.vagon[0] == "percent"){
-						vagon.innerHTML = percent2.toFixed(opt.vagon[1]);
-					};
-					/*Числовое значение*/
-					if (opt.vagon[0] == "value"){
-						delta_MinMax = opt.vagon[2] - opt.vagon[1];
-						thisValue = (delta_MinMax / 100 * percent2) + opt.vagon[1];
-						vagon.innerHTML = thisValue.toFixed(opt.vagon[3] ? opt.vagon[3] : '');
-					};
-					/*Расчет сдвига вагонетки */
+			/*Логика для вагонетки */
+			function vagonetka() {
+				/*Значение в процентах*/
+				if (opt.vagon[0] == "percent") {
 					if (opt.doubleThumb) {
-						if (vagon.innerHTML < 9){
-							vagon.style.left = progress.offsetLeft + "px";
-						}else if (9 < vagon.innerHTML && vagon.innerHTML < 99){
-							vagon.style.left = progress.offsetLeft + "px";
-						}else if (99 < vagon.innerHTML && vagon.innerHTML < 999){
-							vagon.style.left = progress.offsetLeft - 2.5 + "px";
-						}else if (999 < vagon.innerHTML && vagon.innerHTML < 9999){
-							vagon.style.left = progress.offsetLeft - 5 + "px";
-						}
+						vagon.innerHTML = percent2.toFixed(opt.vagon[1]) + "-" + percent.toFixed(opt.vagon[1]);
 					}else {
-						if (vagon.innerHTML < 9){
-							vagon.style.left = progress.offsetWidth + "px";
-						}else if (9 < vagon.innerHTML && vagon.innerHTML < 99){
-							vagon.style.left = progress.offsetWidth + "px";
-						}else if (99 < vagon.innerHTML && vagon.innerHTML < 999){
-							vagon.style.left = progress.offsetWidth - 2.5 + "px";
-						}else if (999 < vagon.innerHTML && vagon.innerHTML < 9999){
-							vagon.style.left = progress.offsetWidth - 5 + "px";
-						}
+						vagon.innerHTML = percent.toFixed(opt.vagon[1]);
+					}
+				};
+				/*Числовое значение*/
+				if (opt.vagon[0] == "value"){
+					if (opt.doubleThumb) {
+						delta_MinMax = opt.vagon[2] - opt.vagon[1];
+						newPercent();
+						thisValue = (delta_MinMax / 100 * percent) + opt.vagon[1];
+						newPercent2();
+						thisValue2 = (delta_MinMax / 100 * percent2) + opt.vagon[1];
+						vagon.innerHTML = (thisValue2.toFixed(opt.vagon[3] ? opt.vagon[3] : '') + "-" + thisValue.toFixed(opt.vagon[3] ? opt.vagon[3] : ''));
+					}else {
+						delta_MinMax = opt.vagon[2] - opt.vagon[1];
+						thisValue = (delta_MinMax / 100 * percent) + opt.vagon[1];
+						vagon.innerHTML = thisValue.toFixed(opt.vagon[3] ? opt.vagon[3] : '');
+					}
+				};
+				/*Расчет сдвига вагонетки */
+				if (opt.doubleThumb) {
+					if (vagon.innerHTML < 9){
+						vagon.style.left = progress.offsetLeft + "px";
+					}else if (9 < vagon.innerHTML && vagon.innerHTML < 99){
+						vagon.style.left = progress.offsetLeft + "px";
+					}else if (99 < vagon.innerHTML && vagon.innerHTML < 999){
+						vagon.style.left = progress.offsetLeft - 2.5 + "px";
+					}else if (999 < vagon.innerHTML && vagon.innerHTML < 9999){
+						vagon.style.left = progress.offsetLeft - 5 + "px";
+					}
+				}else {
+					if (vagon.innerHTML < 9){
+						vagon.style.left = progress.offsetWidth + "px";
+					}else if (9 < vagon.innerHTML && vagon.innerHTML < 99){
+						vagon.style.left = progress.offsetWidth + "px";
+					}else if (99 < vagon.innerHTML && vagon.innerHTML < 999){
+						vagon.style.left = progress.offsetWidth - 2.5 + "px";
+					}else if (999 < vagon.innerHTML && vagon.innerHTML < 9999){
+						vagon.style.left = progress.offsetWidth - 5 + "px";
 					}
 				}
 			}
-			function stopMove() {
-				document.onmousemove = null; // При отпускании мыши убираем обработку события движения мыши
-			}
-			
 
 			/*Расчет шкалы */
 			if (opt.scale){
@@ -338,26 +317,44 @@
 			$(this).children(".stick_main_div").children(".scale").children(".scale_value").click(scaleClick);
 			function scaleClick() {
 				let scaleValue = $(this).html();
-				let changeVal = (scaleValue / opt.vagon[2]) * 100;
+				let changeVal = track.offsetWidth * (scaleValue / opt.scale[2]);
 				changeValue(changeVal);
 				
 			};
 
-			function changeValue(percent){
-				/*Задаем значение прогрессбару*/ 
-				progress.style.width = percent + "%";
+			function changeValue(pressedValue, obj_event){
+				/* Получаем текущие координаты курсора */
+				if (obj_event) {
+					x = obj_event.pageX;
+				}
+				else {
+					x = window.event.clientX;
+					if (ie) {
+					x -= 2;
+					}
+				}
 
-				/*Перемещаем бегунок*/
-				thumb.style.left = percent + "%";
+				/*Узнаем какой ползунок ближе */
+				let firstThumb = x - thumb.getBoundingClientRect().left;
+				let secondThumb = x - doubleThumb.getBoundingClientRect().left;
+				if (Math.abs(firstThumb) <= Math.abs(secondThumb)){
+					/*Перемещаем бегунок*/
+					thumb.style.left = pressedValue - (thumb.offsetWidth / 2) + "px";
+				}else {
+					/*Перемещаем бегунок*/
+					doubleThumb.style.left = pressedValue - (doubleThumb.offsetWidth / 2) + "px";
+				}
+
+				changeProgress();
 
 				/*Значение вагонетки в процентах*/
 				if (opt.vagon[0] == "percent"){
-					vagon.innerHTML = percent.toFixed(opt.vagon[1]);
+					vagon.innerHTML = pressedValue.toFixed(opt.vagon[1]);
 				};
 				/*Числовое значение вагонетки*/
 				if (opt.vagon[0] == "value"){
 					delta_MinMax = opt.vagon[2] - opt.vagon[1];
-					thisValue = (delta_MinMax / 100 * percent) + opt.vagon[1];
+					thisValue = (delta_MinMax / 100 * pressedValue) + opt.vagon[1];
 					vagon.innerHTML = thisValue.toFixed(opt.vagon[3] ? opt.vagon[3] : '');
 				};
 				/*Расчет сдвига вагонетки */
@@ -379,7 +376,7 @@
 				/*Числовое значение*/
 				if (opt.outValue[0] == "value"){
 					delta_MinMax = opt.outValue[2] - opt.outValue[1];
-					thisValue = (delta_MinMax / 100 * percent) + opt.outValue[1];
+					thisValue = (delta_MinMax / 100 * pressedValue) + opt.outValue[1];
 
 					outValue.innerHTML = thisValue.toFixed(opt.outValue[3] ? opt.outValue[3] : '');
 

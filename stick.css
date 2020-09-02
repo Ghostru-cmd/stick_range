@@ -48,7 +48,8 @@
     left: -35px;
 }
 .stick_main_div > .vagon{
-    position: absolute;
+    position: relative;
+    display: inline;
     border: 1px solid black;
     top: -25px;
 }
