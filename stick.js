@@ -289,6 +289,7 @@
 						vagon.innerHTML = (thisValue2.toFixed(opt.vagon[3] ? opt.vagon[3] : '') + "-" + thisValue.toFixed(opt.vagon[3] ? opt.vagon[3] : ''));
 					}else {
 						delta_MinMax = opt.vagon[2] - opt.vagon[1];
+						newPercent();
 						thisValue = (delta_MinMax / 100 * percent) + opt.vagon[1];
 						vagon.innerHTML = thisValue.toFixed(opt.vagon[3] ? opt.vagon[3] : '');
 					}
@@ -374,17 +375,7 @@
 			};
 
 			/*Узнаем какой ползунок ближе */
-			function closerThumb() {
-				let firstThumb = x - thumb.getBoundingClientRect().left;
-				let secondThumb = x - doubleThumb.getBoundingClientRect().left;
-				if (Math.abs(firstThumb) <= Math.abs(secondThumb)) {
-					return "firstThumb";
-				}else {
-					return "secondThumb";
-				}
-			}
-
-			function changeValue(pressedValue, obj_event){
+			function closerThumb(obj_event) {
 				/* Получаем текущие координаты курсора */
 				if (obj_event) {
 					x = obj_event.pageX;
@@ -395,18 +386,26 @@
 					x -= 2;
 					}
 				}
+				let firstThumb = x - thumb.getBoundingClientRect().left;
+				let secondThumb = x - doubleThumb.getBoundingClientRect().left;
+				if (Math.abs(firstThumb) <= Math.abs(secondThumb)) {
+					return "firstThumb";
+				}else {
+					return "secondThumb";
+				}
+			}
 
-				
+			function changeValue(pressedValue){
 				if (opt.doubleThumb) {
 					if (closerThumb() == "firstThumb"){
 						/*Перемещаем бегунок*/
-						thumb.style.left = pressedValue - (thumb.offsetWidth / 2) + "px";
+						thumb.style.left = (pressedValue / opt.scale[2]) * 100 + "%";
 					}else {
 						/*Перемещаем бегунок*/
-						doubleThumb.style.left = pressedValue - (doubleThumb.offsetWidth / 2) + "px";
+						doubleThumb.style.left = (pressedValue / opt.scale[2]) * 100 + "%";
 					}
 				}else {
-					thumb.style.left = pressedValue - (thumb.offsetWidth / 2) + "px";
+					thumb.style.left = (pressedValue / opt.scale[2]) * 100 + "%";
 				}
 				
 
