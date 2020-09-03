@@ -214,17 +214,44 @@
 			}
 
 			/*Задаем выводимое значение*/
-			function valueInferred() {
+			function valueInferred(scalValue) {
+				outValueInner = outValue.innerHTML;
+				scalValue = parseInt(scalValue);
 				/*Значение в процентах*/
 				if (opt.outValue[0] == "percent"){
+					newPercent();
+					newPercent2();
 					outValue.innerHTML = percent.toFixed(opt.outValue[1]);
+					if (opt.doubleThumb){
+						outValue.innerHTML = percent2.toFixed(opt.outValue[1]) + "-" + percent.toFixed(opt.outValue[1]);
+					}
 				};
 				/*Числовое значение*/
 				if (opt.outValue[0] == "value"){
 					delta_MinMax = opt.outValue[2] - opt.outValue[1];
-					thisValue = (delta_MinMax / 100 * percent) + opt.outValue[1];
-
+					if (!scalValue){
+						thisValue = (delta_MinMax / 100 * percent) + opt.outValue[1];
+					}else {
+						thisValue = scalValue;
+					}
 					outValue.innerHTML = thisValue.toFixed(opt.outValue[3] ? opt.outValue[3] : '');
+					if (opt.doubleThumb){
+						if (closerThumb() == "firstThumb"){
+							if (!scalValue){
+								thisValue = (delta_MinMax / 100 * percent) + opt.outValue[1];
+							}else {
+								thisValue = scalValue;
+							}
+							outValue.innerHTML = outValueInner.split("-")[0] + "-" + thisValue.toFixed(opt.outValue[3] ? opt.outValue[3] : '');
+						}else {
+							if (!scalValue){
+								thisValue2 = (delta_MinMax / 100 * percent2) + opt.outValue[1];
+							}else {
+								thisValue2 = scalValue;
+							}
+							outValue.innerHTML = thisValue2.toFixed(opt.outValue[3] ? opt.outValue[3] : '') + "-" + outValueInner.split("-")[1];
+						}
+					}
 
 				};
 			
@@ -241,7 +268,8 @@
 			}
 
 			/*Логика для вагонетки */
-			function vagonetka() {
+			function vagonetka(scalValue) {
+				vadonInner = vagon.innerHTML;
 				/*Значение в процентах*/
 				if (opt.vagon[0] == "percent") {
 					if (opt.doubleThumb) {
@@ -287,6 +315,30 @@
 						vagon.style.left = progress.offsetWidth - 5 + "px";
 					}
 				}
+				if (scalValue) {
+					if (opt.vagon[0] == "value"){
+						if (opt.doubleThumb) {
+							if (closerThumb() == "firstThumb") {
+								vagon.innerHTML = (vadonInner.split("-")[0] + "-" + scalValue);
+							}else {
+								vagon.innerHTML = (scalValue + "-" + vadonInner.split("-")[1]);
+							}
+						}else {
+							vagon.innerHTML = scalValue;
+						}
+					}
+					if (opt.vagon[0] == "percent"){
+						if (opt.doubleThumb) {
+							if (closerThumb() == "firstThumb") {
+								vagon.innerHTML = (percent2.toFixed(opt.vagon[3] ? opt.vagon[3] : '') + "-" + scalValue);
+							}else {
+								vagon.innerHTML = (scalValue + "-" + percent.toFixed(opt.vagon[3] ? opt.vagon[3] : ''));
+							}
+						}else {
+							vagon.innerHTML = scalValue;
+						}
+					}
+				}
 			}
 
 			/*Расчет шкалы */
@@ -317,10 +369,20 @@
 			$(this).children(".stick_main_div").children(".scale").children(".scale_value").click(scaleClick);
 			function scaleClick() {
 				let scaleValue = $(this).html();
-				let changeVal = track.offsetWidth * (scaleValue / opt.scale[2]);
-				changeValue(changeVal);
+				changeValue(scaleValue);
 				
 			};
+
+			/*Узнаем какой ползунок ближе */
+			function closerThumb() {
+				let firstThumb = x - thumb.getBoundingClientRect().left;
+				let secondThumb = x - doubleThumb.getBoundingClientRect().left;
+				if (Math.abs(firstThumb) <= Math.abs(secondThumb)) {
+					return "firstThumb";
+				}else {
+					return "secondThumb";
+				}
+			}
 
 			function changeValue(pressedValue, obj_event){
 				/* Получаем текущие координаты курсора */
@@ -334,53 +396,25 @@
 					}
 				}
 
-				/*Узнаем какой ползунок ближе */
-				let firstThumb = x - thumb.getBoundingClientRect().left;
-				let secondThumb = x - doubleThumb.getBoundingClientRect().left;
-				if (Math.abs(firstThumb) <= Math.abs(secondThumb)){
-					/*Перемещаем бегунок*/
-					thumb.style.left = pressedValue - (thumb.offsetWidth / 2) + "px";
+				
+				if (opt.doubleThumb) {
+					if (closerThumb() == "firstThumb"){
+						/*Перемещаем бегунок*/
+						thumb.style.left = pressedValue - (thumb.offsetWidth / 2) + "px";
+					}else {
+						/*Перемещаем бегунок*/
+						doubleThumb.style.left = pressedValue - (doubleThumb.offsetWidth / 2) + "px";
+					}
 				}else {
-					/*Перемещаем бегунок*/
-					doubleThumb.style.left = pressedValue - (doubleThumb.offsetWidth / 2) + "px";
+					thumb.style.left = pressedValue - (thumb.offsetWidth / 2) + "px";
 				}
+				
 
 				changeProgress();
 
-				/*Значение вагонетки в процентах*/
-				if (opt.vagon[0] == "percent"){
-					vagon.innerHTML = pressedValue.toFixed(opt.vagon[1]);
-				};
-				/*Числовое значение вагонетки*/
-				if (opt.vagon[0] == "value"){
-					delta_MinMax = opt.vagon[2] - opt.vagon[1];
-					thisValue = (delta_MinMax / 100 * pressedValue) + opt.vagon[1];
-					vagon.innerHTML = thisValue.toFixed(opt.vagon[3] ? opt.vagon[3] : '');
-				};
-				/*Расчет сдвига вагонетки */
-				if (vagon.innerHTML < 9){
-					vagon.style.left = progress.offsetWidth + "px";
-				}else if (9 < vagon.innerHTML && vagon.innerHTML < 99){
-					vagon.style.left = progress.offsetWidth + "px";
-				}else if (99 < vagon.innerHTML && vagon.innerHTML < 999){
-					vagon.style.left = progress.offsetWidth - 2.5 + "px";
-				}else if (999 < vagon.innerHTML && vagon.innerHTML < 9999){
-					vagon.style.left = progress.offsetWidth - 5 + "px";
-				}
+				vagonetka(pressedValue);
 
-				/*Задаем выводимое значение*/
-				/*Значение в процентах*/
-				if (opt.outValue[0] == "percent"){
-					outValue.innerHTML = percent.toFixed(opt.outValue[1]);
-				};
-				/*Числовое значение*/
-				if (opt.outValue[0] == "value"){
-					delta_MinMax = opt.outValue[2] - opt.outValue[1];
-					thisValue = (delta_MinMax / 100 * pressedValue) + opt.outValue[1];
-
-					outValue.innerHTML = thisValue.toFixed(opt.outValue[3] ? opt.outValue[3] : '');
-
-				};
+				valueInferred(pressedValue);
 
 			};
 

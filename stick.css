@@ -44,8 +44,9 @@
     z-index: 0;
 }
 .stick_main_div > .outValue{
-    position: absolute;
-    left: -35px;
+    position: relative;
+    display: inline;
+    left: 102%;
 }
 .stick_main_div > .vagon{
     position: relative;
