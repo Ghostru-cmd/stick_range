@@ -72,7 +72,7 @@
 			delta_x = 0;
 			/*Значение слайдера в процентах*/
 			function newPercent() {
-				percent = ((thumb.offsetLeft + thumb.offsetWidth) / track.offsetWidth) * 100;
+				percent = (thumb.offsetLeft / track.offsetWidth) * 100;
 			}
 			function newPercent2() {
 				percent2 = (doubleThumb.offsetLeft / track.offsetWidth) * 100;
@@ -115,7 +115,7 @@
 			//функция выполняемая при движении ползунка
 			function moveThumb(obj_event) {
 				trackWidth = track.offsetWidth;
-				delta_trackWidth = trackWidth - thumb.offsetWidth;
+				delta_trackWidth = trackWidth;
 				/* Получаем новые координаты курсора мыши */
 				if (obj_event) {
 					x = obj_event.pageX;
@@ -182,7 +182,7 @@
 
 			function moveThumbSecond(obj_event) {
 				trackWidth = track.offsetWidth;
-				delta_trackWidth = trackWidth - doubleThumb.offsetWidth;
+				delta_trackWidth = trackWidth;
 				/* Получаем новые координаты курсора мыши */
 				if (obj_event) {
 					x = obj_event.pageX;
@@ -308,25 +308,21 @@
 					}
 				};
 				/*Расчет сдвига вагонетки */
-				if (opt.doubleThumb) {
-					if (vagon.innerHTML < 9){
-						vagon.style.left = progress.offsetLeft + "px";
-					}else if (9 < vagon.innerHTML && vagon.innerHTML < 99){
-						vagon.style.left = progress.offsetLeft + "px";
-					}else if (99 < vagon.innerHTML && vagon.innerHTML < 999){
-						vagon.style.left = progress.offsetLeft - 2.5 + "px";
-					}else if (999 < vagon.innerHTML && vagon.innerHTML < 9999){
-						vagon.style.left = progress.offsetLeft - 5 + "px";
+				if (opt.doubleThumb == true) {
+					if (closerThumb() == "firstThumb") {
+						vagon.style.left = thumb.offsetLeft - 40 + "px";
+					}else {
+						vagon.style.left = doubleThumb.offsetLeft - 40 + "px";
 					}
 				}else {
 					if (vagon.innerHTML < 9){
-						vagon.style.left = progress.offsetWidth + "px";
+						vagon.style.left = thumb.offsetLeft - thumb.offsetWidth + 15 + "px";
 					}else if (9 < vagon.innerHTML && vagon.innerHTML < 99){
-						vagon.style.left = progress.offsetWidth + "px";
+						vagon.style.left = thumb.offsetLeft - thumb.offsetWidth + 5 + "px";
 					}else if (99 < vagon.innerHTML && vagon.innerHTML < 999){
-						vagon.style.left = progress.offsetWidth - 2.5 + "px";
+						vagon.style.left = thumb.offsetLeft - thumb.offsetWidth - 5 + "px";
 					}else if (999 < vagon.innerHTML && vagon.innerHTML < 9999){
-						vagon.style.left = progress.offsetWidth - 5 + "px";
+						vagon.style.left = thumb.offsetLeft - thumb.offsetWidth - 10 + "px";
 					}
 				}
 				if (scalValue) {
@@ -383,7 +379,7 @@
 					}
 					$(scale_value).clone().appendTo(scale);
 				};
-			};
+			}
 	
 			/*Действия при клике на шкалу */
 			$(this).children(".stick_main_div").children(".scale").children(".scale_value").click(scaleClick);
@@ -391,7 +387,7 @@
 				let scaleValue = $(this).html();
 				changeValue(scaleValue);
 				
-			};
+			}
 
 			/*Узнаем какой ползунок ближе */
 			function closerThumb(obj_event) {
@@ -450,7 +446,8 @@
 				changeVal = changeVal.toFixed(opt.minMax[2] ? opt.minMax[2] : '');
 				changeValue(changeVal);
 				
-			};
+			}
+
 			/*Новые стили для вертикального отображения */
 			if (opt.vertical == true) {
 				main_div.style.transform = "rotate(90deg)";
