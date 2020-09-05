@@ -1,5 +1,7 @@
 $(document).ready(function(){
     $(".div").stick({
+        minMax: [0, 200],
+        vertical: false,
         outValue: ["value", 0, 200], /** Выводимое число
         * Первое значение - percent или value. 
             При значении percent: второе значение массива - округление. При значении value, второе значение - минимальное число, третье значение - максимальное число, четвертое(не обязательное) - округление.
@@ -9,6 +11,7 @@ $(document).ready(function(){
         doubleThumb: true
     });
     $("p").stick({
+        minMax: [0, 2000],
         outValue: ["value", 0, 2000],
         vagon: ["value", 0, 2000],
         scale: [5, 0, 2000]

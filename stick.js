@@ -91,6 +91,10 @@
 				/* Получаем текущие координаты курсора */
 				if (obj_event) {
 					x = obj_event.pageX;
+					if (opt.vertical) {
+						x = obj_event.pageY;
+					}
+
 				}
 				else {
 					x = window.event.clientX;
@@ -115,6 +119,9 @@
 				/* Получаем новые координаты курсора мыши */
 				if (obj_event) {
 					x = obj_event.pageX;
+					if (opt.vertical) {
+						x = obj_event.pageY;
+					}
 				}
 				else {
 					x = window.event.clientX;
@@ -152,6 +159,9 @@
 				/* Получаем текущие координаты курсора */
 				if (obj_event) {
 					x = obj_event.pageX;
+					if (opt.vertical) {
+						x = obj_event.pageY;
+					}
 				}
 				else {
 					x = window.event.clientX;
@@ -176,6 +186,9 @@
 				/* Получаем новые координаты курсора мыши */
 				if (obj_event) {
 					x = obj_event.pageX;
+					if (opt.vertical) {
+						x = obj_event.pageY;
+					}
 				}
 				else {
 					x = window.event.clientX;
@@ -349,19 +362,25 @@
 				for (i = 0; i <= opt.vagon[2]; i += deltaScale){
 					let scaleWidth = track.offsetWidth / opt.scale[0];
 					if (i < 9){
-						scaleWidth -= 10;
+						scaleWidth -= 15;
 					}
 					if (9 < i && i < 99){
-						scaleWidth -= 20;
+						scaleWidth -= 25;
 					}
 					if (99 < i && i < 999){
 						scaleWidth -= 30;
 					}
 					if (999 < i && i < 9999){
-						scaleWidth -= 40;
+						scaleWidth -= 35;
 					}
 					scale_value.innerHTML = parseInt(i);
 					scale_value.style.marginRight = scaleWidth +"px";
+					if (opt.vertical) {
+						/*Новые стили для вертикального отображения */
+						scale_value.style.marginRight =(scaleWidth -= 1) +"px";
+						scale_value.style.transform = "rotate(-90deg)";
+						scale_value.style.display = "inline-block";
+					}
 					$(scale_value).clone().appendTo(scale);
 				};
 			};
@@ -379,6 +398,9 @@
 				/* Получаем текущие координаты курсора */
 				if (obj_event) {
 					x = obj_event.pageX;
+					if (opt.vertical) {
+						x = obj_event.pageY;
+					}
 				}
 				else {
 					x = window.event.clientX;
@@ -421,15 +443,26 @@
 			$(this).children(".stick_main_div").children(".track").click(trackProgressClick);
 			$(this).children(".stick_main_div").children(".progress").click(trackProgressClick);
 			function trackProgressClick(obj_event) {
-				x = track.offsetWidth;
-
-				let elem_left = $(this).offset().left;
-				y = obj_event.pageX - elem_left;
-				let changeVal = (y / x) * 100;
+				//let elem_left = $(this).offset().left;
+				let x = obj_event.pageX - main_div.offsetLeft;
+				let percentTrack = (x / track.offsetWidth);
+				let changeVal = (opt.minMax[1] - opt.minMax[0]) * percentTrack;
+				changeVal = changeVal.toFixed(opt.minMax[2] ? opt.minMax[2] : '');
 				changeValue(changeVal);
 				
 			};
-
+			/*Новые стили для вертикального отображения */
+			if (opt.vertical == true) {
+				main_div.style.transform = "rotate(90deg)";
+				main_div.style.display = "inline-block";
+				outValue.style.transform = "rotate(-90deg)";
+				outValue.style.display = "inline-block";
+				vagon.style.transform = "rotate(-90deg)";
+				vagon.style.display = "inline-block";
+				scale.style.marginLeft = "20px";
+				scale_value.style.transform = "rotate(-90deg)";
+				scale_value.style.display = "inline-block";
+			}
 			
 		}
 	})	
