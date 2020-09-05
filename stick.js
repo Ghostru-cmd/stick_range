@@ -3,6 +3,7 @@
 	$("head").append($("<link rel=\"stylesheet\" href=\"./stick.css\">")); // подключил стили 
 	$.fn.extend({
 		stick: function(opt) {
+			$(this).empty();
 			/*Создаем дивы слайдера*/
 			let main_div = document.createElement("div");
 			main_div.className = "stick_main_div";
@@ -110,6 +111,10 @@
 				document.onmousemove = moveThumb;
 				if (op || ff)
 					document.addEventListener("onmousemove", moveThumb, false);
+			}
+
+			if (opt.value) {
+				changeValue(opt.value);
 			}
 
 			//функция выполняемая при движении ползунка

@@ -24,10 +24,34 @@ $(document).ready(function(){
         * True - если нужно два ползунка.
         */
     });
-    $("p").stick({
+    $(".div2").stick({
         minMax: [0, 2000],
         outValue: ["value", 0, 2000],
         vagon: ["value", 0, 2000],
         scale: [5, 0, 2000]
     });
+    $(".div3").stick({
+        minMax: [0, 20],
+        vagon: ["value", 0, 20],
+        scale: [5, 0, 20],
+        vertical: true
+    });
+    $(".div4").stick({
+        minMax: [0, 20],
+        vertical: true
+    });
+    $("button").click(clicked)
+    function clicked () {
+        text = document.getElementsByTagName("input")[0];
+        input = text.value;
+        $(".div2").stick({
+            minMax: [0, 200],
+            vertical: false,
+            outValue: ["value", 0, 2000],
+            vagon: ["value", 0, 2000],
+            scale: [5, 0, 2000],
+            doubleThumb: false,
+            value: input
+        })
+    };
 })
