@@ -45,7 +45,7 @@ $(document).ready(function(){
         text = document.getElementsByTagName("input")[0];
         input = text.value;
         $(".div2").stick({
-            minMax: [0, 200],
+            minMax: [0, 2000],
             vertical: false,
             outValue: ["value", 0, 2000],
             vagon: ["value", 0, 2000],
