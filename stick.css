@@ -32,6 +32,7 @@
     border: 2px solid green;
     background: greenyellow;
     border-radius: 100%;
+    transform: translate(-8px, 0px);
     top: -2px;
     z-index: 1;
 }
@@ -42,13 +43,14 @@
     border: 2px solid green;
     background: greenyellow;
     border-radius: 100%;
+    transform: translate(-8px, 0px);
     top: -2px;
     z-index: 0;
 }
 .stick_main_div > .outValue{
     position: relative;
     display: inline;
-    left: 102%;
+    left: 215px;
 }
 .stick_main_div > .vagon{
     position: relative;
