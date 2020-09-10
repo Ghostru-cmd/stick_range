@@ -33,11 +33,13 @@ $(document).ready(function(){
     $(".div3").stick({
         minMax: [0, 20],
         vagon: ["value", 0, 20],
+        outValue: ["value", 0, 20],
         scale: [5, 0, 20],
         vertical: true
     });
     $(".div4").stick({
         minMax: [0, 20],
+        outValue: ["value", 0, 20],
         vertical: true
     });
     $("button").click(clicked)
